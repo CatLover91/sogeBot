@@ -249,7 +249,7 @@ class Users extends Core {
     return IdsToUsername
   }
 
-  async showMe (opts) {
+  async showMe (opts: Object) {
     try {
       var message = ['$sender']
 
