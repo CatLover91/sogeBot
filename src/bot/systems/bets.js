@@ -166,8 +166,8 @@ class Bets extends System {
     try {
       let [index, points] = expects.check(opts.parameters).number({ optional: true }).points({ optional: true }).toArray()
       if (!_.isNil(points) && !_.isNil(index)) {
-        const pointsOfUser = await global.systems.points.getPointsOf(opts.sender.username)
-        const _betOfUser = await global.db.engine.findOne(this.collection.users, { username: opts.sender.username })
+        const pointsOfUser = await global.systems.points.getPointsOf(opts.sender.userId)
+        const _betOfUser = await global.db.engine.findOne(this.collection.users, { id: opts.sender.userId })
 
         if (points === 'all' || points > pointsOfUser) points = pointsOfUser
 

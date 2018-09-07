@@ -237,8 +237,8 @@ class Heist extends Game {
       return
     }
 
-    points = points === 'all' && !_.isNil(await global.systems.points.getPointsOf(opts.sender.username)) ? await global.systems.points.getPointsOf(opts.sender.username) : parseInt(points, 10) // set all points
-    points = points > await global.systems.points.getPointsOf(opts.sender.username) ? await global.systems.points.getPointsOf(opts.sender.username) : points // bet only user points
+    points = points === 'all' && !_.isNil(await global.systems.points.getPointsOf(opts.sender.userId)) ? await global.systems.points.getPointsOf(opts.sender.userId) : parseInt(points, 10) // set all points
+    points = points > await global.systems.points.getPointsOf(opts.sender.userId) ? await global.systems.points.getPointsOf(opts.sender.userId) : points // bet only user points
     d(`${opts.command} - ${opts.sender.username} betting ${points}`)
 
     if (points === 0 || _.isNil(points) || _.isNaN(points)) {

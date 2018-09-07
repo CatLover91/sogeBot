@@ -249,6 +249,10 @@ class Users extends Core {
     return IdsToUsername
   }
 
+  async getNameById (id: string) {
+    return (await global.db.engine.findOne('users', { id })).username
+  }
+
   async showMe (opts: Object) {
     try {
       var message = ['$sender']

@@ -287,14 +287,14 @@ class Twitch {
     let _total = 10 + global.commons.getIgnoreList().length + 2 // 2 for bot and broadcaster
     if (type === 'points' && await global.systems.points.isEnabled()) {
       sorted = []
-      for (let user of (await global.db.engine.find('users.points', { _sort: 'points', _sum: 'points', _total, _group: 'username' }))) {
-        sorted.push({ username: user._id, points: user.points })
+      for (let user of (await global.db.engine.find('users.points', { _sort: 'points', _sum: 'points', _total, _group: 'id' }))) {
+        sorted.push({ username: await global.users.getNameById(user._id), points: user.points })
       }
       message = global.translate('top.listPoints').replace(/\$amount/g, 10)
     } else if (type === 'time') {
       sorted = []
-      for (let user of (await global.db.engine.find('users.watched', { _sort: 'watched', _sum: 'watched', _total, _group: 'username' }))) {
-        sorted.push({ username: user._id, watched: user.watched })
+      for (let user of (await global.db.engine.find('users.watched', { _sort: 'watched', _sum: 'watched', _total, _group: 'id' }))) {
+        sorted.push({ username: await global.users.getNameById(user._id), watched: user.watched })
       }
       message = global.translate('top.listWatched').replace(/\$amount/g, 10)
     } else if (type === 'tips') {
@@ -302,14 +302,15 @@ class Twitch {
       message = global.translate('top.listTips').replace(/\$amount/g, 10)
       let tips = await global.db.engine.find('users.tips')
       for (let tip of tips) {
-        if (_.isNil(users[tip.username])) users[tip.username] = { username: tip.username, amount: 0 }
-        users[tip.username].amount += global.currency.exchange(tip.amount, tip.currency, await global.configuration.getValue('currency'))
+        const username = await global.users.getNameById(tip.id)
+        if (_.isNil(users[username])) users[username] = { username: username, amount: 0 }
+        users[username].amount += global.currency.exchange(tip.amount, tip.currency, await global.configuration.getValue('currency'))
       }
       sorted = _.orderBy(users, 'amount', 'desc')
     } else if (type === 'messages') {
       sorted = []
-      for (let user of (await global.db.engine.find('users.messages', { _sort: 'messages', _sum: 'messages', _total, _group: 'username' }))) {
-        sorted.push({ username: user._id, messages: user.messages })
+      for (let user of (await global.db.engine.find('users.messages', { _sort: 'messages', _sum: 'messages', _total, _group: 'id' }))) {
+        sorted.push({ username: await global.users.getNameById(user._id), messages: user.messages })
       }
       message = global.translate('top.listMessages').replace(/\$amount/g, 10)
     } else if (type === 'followage') {
