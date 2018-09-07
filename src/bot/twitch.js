@@ -34,7 +34,6 @@ class Twitch {
       { this: this, id: '!followers', command: '!followers', fnc: this.followers, permission: constants.VIEWERS },
       { this: this, id: '!subs', command: '!subs', fnc: this.subs, permission: constants.VIEWERS },
       { this: this, id: '!age', command: '!age', fnc: this.age, permission: constants.VIEWERS },
-      { this: this, id: '!me', command: '!me', fnc: this.showMe, permission: constants.VIEWERS },
       { this: this, id: '!top time', command: '!top time', fnc: this.showTopTime, permission: constants.OWNER_ONLY },
       { this: this, id: '!top tips', command: '!top tips', fnc: this.showTopTips, permission: constants.OWNER_ONLY },
       { this: this, id: '!top points', command: '!top points', fnc: this.showTopPoints, permission: constants.OWNER_ONLY },
@@ -248,46 +247,6 @@ class Twitch {
       debug(m); global.commons.sendMessage(m, opts.sender)
     } catch (e) {
       global.commons.sendMessage(global.translate('watched.failed.parse'), opts.sender)
-    }
-  }
-
-  async showMe (opts) {
-    try {
-      const user = await global.users.get(opts.sender.username)
-      var message = ['$sender']
-
-      // rank
-      var rank = await global.systems.ranks.get(user)
-      if (await global.systems.ranks.isEnabled() && !_.isNull(rank)) message.push(rank)
-
-      // watchTime
-      var watched = await global.users.getWatchedOf(opts.sender.username)
-      message.push((watched / 1000 / 60 / 60).toFixed(1) + 'h')
-
-      // points
-      if (await global.systems.points.isEnabled()) {
-        let userPoints = await global.systems.points.getPointsOf(opts.sender.username)
-        message.push(userPoints + ' ' + await global.systems.points.getPointsName(userPoints))
-      }
-
-      // message count
-      var messages = await global.users.getMessagesOf(opts.sender.username)
-      message.push(messages + ' ' + global.commons.getLocalizedName(messages, 'core.messages'))
-
-      // tips
-      const [tips, currency] = await Promise.all([
-        global.db.engine.find('users.tips', { username: opts.sender.username }),
-        global.configuration.getValue('currency')
-      ])
-      let tipAmount = 0
-      for (let t of tips) {
-        tipAmount += global.currency.exchange(t.amount, t.currency, currency)
-      }
-      message.push(`${Number(tipAmount).toFixed(2)} ${currency}`)
-
-      global.commons.sendMessage(message.join(' | '), opts.sender)
-    } catch (e) {
-      global.log.error(e.stack)
     }
   }
 

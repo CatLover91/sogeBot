@@ -134,7 +134,7 @@ class Heist extends Game {
         if (isSurvivor) {
           // add points to user
           let points = parseInt((await global.db.engine.findOne(this.collection.users, { username: user.username })).points, 10)
-          await global.db.engine.insert('users.points', { username: user.username, points: parseInt(parseFloat(points * level.payoutMultiplier).toFixed(), 10) })
+          await global.db.engine.insert('users.points', { id: user.id, points: parseInt(parseFloat(points * level.payoutMultiplier).toFixed(), 10) })
         }
       } else {
         let winners = []
@@ -144,7 +144,7 @@ class Heist extends Game {
           if (isSurvivor) {
             // add points to user
             let points = parseInt((await global.db.engine.findOne(this.collection.users, { username: user.username })).points, 10)
-            await global.db.engine.insert('users.points', { username: user.username, points: parseInt(parseFloat(points * level.payoutMultiplier).toFixed(), 10) })
+            await global.db.engine.insert('users.points', { id: user.id, points: parseInt(parseFloat(points * level.payoutMultiplier).toFixed(), 10) })
             winners.push(user.username)
           }
         }
@@ -248,8 +248,8 @@ class Heist extends Game {
     } // send entryInstruction if command is not ok
 
     await Promise.all([
-      global.db.engine.insert('users.points', { username: opts.sender.username, points: parseInt(points, 10) * -1 }), // remove points from user
-      global.db.engine.update(this.collection.users, { username: opts.sender.username }, { points: points }) // add user to heist list
+      global.db.engine.insert('users.points', { id: opts.sender.userId, points: parseInt(points, 10) * -1 }), // remove points from user
+      global.db.engine.update(this.collection.users, { id: opts.sender.userId }, { username: opts.sender.username, points: points }) // add user to heist list
     ])
 
     // check how many users are in heist
