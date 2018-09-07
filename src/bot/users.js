@@ -20,7 +20,6 @@ class Users extends Core {
       commands: [
         { name: '!regular add', fnc: 'addRegular', permission: constants.OWNER_ONLY },
         { name: '!regular remove', fnc: 'rmRegular', permission: constants.OWNER_ONLY },
-        { name: '!merge', fnc: 'merge', permission: constants.MODS },
         { name: '!ignore add', fnc: 'ignoreAdd', permission: constants.OWNER_ONLY },
         { name: '!ignore rm', fnc: 'ignoreRm', permission: constants.OWNER_ONLY },
         { name: '!ignore check', fnc: 'ignoreCheck', permission: constants.OWNER_ONLY },
